@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {{>css}}
+
+    <style>
+        tr {
+            line-height: 80px;
+            min-height: 80px;
+            height: 80px;
+            font-size: 20px;
+        }
+
+    </style>
+
+    <title>Quy định</title>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {{>(nav)}}
+        <!-- Page Content  -->
+        <div id="content">
+            <div class="row justify-content-between">
+                <div class="col-md-9">
+                    <h1>Quy định</h1>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-outline-success"  data-bs-toggle="modal"
+                            data-bs-target="#addRegulation">
+                        <h5>
+                            <i class="fas fa-plus" style="font-size: 20px;"></i>
+                            Thêm quy định
+                        </h5>
+                    </button>
+                </div>
+            </div>
+            <div class="row my-5">
+                <div class="col-md-12">
+                    <table class="table table-striped table-info">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tên qui định</th>
+                                <th scope="col">Mô tả</th>
+                                <th scope="col">Tình trạng sử dụng</th>
+                                <th scope="col">Cập nhật</th>
+                            </tr>
+                        </thead>
+                        {{#if this.empty}}
+                            <tbody class="card-body">
+                                <p class="card-text">Không có dữ liệu.</p>
+                            </tbody>
+                        {{else}}                       
+                            <tbody>
+                                {{#each this.regulations }}
+                                    <tr>
+                                        <th class="ml-pd-3" scope="row">Quy định {{Id}}</th>
+                                        <td>{{TenQuyDinh}} là {{format_number GiaTri}}</td>
+                                        <td>
+                                            {{#if TinhTrangSuDung}}
+                                                Đang áp dụng
+                                            {{else}}
+                                                Không áp dụng
+                                            {{/if}}
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-outline-primary" role="button" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#editRegulation{{Id}}">
+                                                <i class="far fa-edit" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="btn btn-outline-danger" role="button" data-bs-toggle="modal"
+                                            data-bs-target="#deleteRegulation{{Id}}">
+                                                <i class="fas fa-trash" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {{/each}}             
+                            </tbody>
+                        {{/if}}
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal of Add-->
+            <div class="modal fade" id="addRegulation" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="/regulation/add">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Thêm sản phẩm</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-2">
+                                    <label for="productName">Tên quy định: </label>
+                                    <input class="form-control regulationNameAdd" type="text" name="regulationName">
+                                    <div class="checkNameAdd"></div>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="productImage">Giá trị: </label>
+                                    <input class="form-control regulationValueAdd" type="number" name="regulationValue">
+                                    <div class="checkValueAdd"></div>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="regulationKind">Kiểu dữ liệu của giá trị: </label>
+                                    <select class="form-control form-select" id="regulationKind" name="regulationKind">
+                                        <option selected value="integer">integer</option>
+                                        <option value="float">float</option>
+                                        <option value="string">string</option>
+                                    </select>     
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="regulationUse">Tình trạng sử dụng: </label>
+                                    <select class="form-control form-select" id="regulationUse" name="regulationUse">
+                                        <option selected value="true">true</option>
+                                        <option value="false">false</option>
+                                    </select>     
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary btn-add" value="Save" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal of Edit-->
+            {{#each this.regulations }}
+            <div class="modal fade" id="editRegulation{{Id}}" tabindex="-1" aria-labelledby="deleteProductLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="/regulation/update/{{Id}}">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Sửa quy định</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-2">
+                                    <label for="productName">Tên quy định: </label>
+                                    <input class="form-control regulationNameEdit" type="text" name="regulationNameEdit" value="{{TenQuyDinh}}">
+                                    <div class="checkNameEdit"></div>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="productImage">Giá trị: </label>
+                                    <input class="form-control regulationValueEdit" type="number" name="regulationValueEdit" value="{{GiaTri}}">
+                                    <div class="checkValueEdit"></div>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="regulationKindEdit">Kiểu dữ liệu của giá trị: </label>
+                                    <select class="form-control form-select" id="regulationKindEdit" name="regulationKindEdit">
+                                        <option {{#ifStr KieuDuLieu "integer"}} selected {{/ifStr}} value="integer">integer</option>
+                                        <option {{#ifStr KieuDuLieu "float"}} selected {{/ifStr}} value="float">float</option>
+                                        <option {{#ifStr KieuDuLieu "string"}} selected {{/ifStr}} value="string">string</option>
+                                    </select>     
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="regulationUse">Tình trạng sử dụng: </label>
+                                    <select class="form-control form-select" id="regulationUseEdit" name="regulationUseEdit">
+                                        <option {{#if TinhTrangSuDung}} selected {{/if}} value="true">true</option>
+                                        <option {{#unless TinhTrangSuDung}} selected {{/unless}} value="false">false</option>
+                                    </select>     
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary btn-edit" value="Save" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            <!-- Modal of Delete-->
+            {{#each this.regulations }}
+            <div class="modal fade" id="deleteRegulation{{Id}}" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="/regulation/delete/{{Id}}">
+                            <div class="modal-header">
+                                <div class="form-group mb-2 h2">
+                                    Xóa quy định
+                                </div>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-2">
+                                    Bạn thực sự muốn xóa <strong>Quy Định {{Id}}</strong>?
+                                    <input type="text" name="Id" value="{{Id}}" hidden />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <input type="submit" class="btn btn-primary" value="Yes" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+
+<!-- Jquery -->
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<!-- Popper.JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
+<!-- Upload JS-->
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/js/plugins/piexif.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/js/plugins/sortable.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/js/fileinput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/themes/fas/theme.min.js"></script>
+
+<script>
+    $(document).ready( () => {
+        // Kiểm tra ràng buộc các ô được nhập
+        function alert(message, type, element) {
+            $(`.check${element}Edit`).html('<div class="alert alert-' + type + ' d-flex align-items-center mt-1 alert-dismissible" role="alert"> <i class="fas fa-exclamation-triangle"></i> <div>' + message + '</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        }
+
+        function alertAdd(message, type, element) {
+            $(`.check${element}Add`).html('<div class="alert alert-' + type + ' d-flex align-items-center mt-1 alert-dismissible" role="alert"> <i class="fas fa-exclamation-triangle"></i> <div>' + message + '</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        }
+
+        // Kiêm tra ràng buộc ở chỉnh sửa
+        var checkName = 0, checkValue = 0;
+        $('.regulationNameEdit').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                checkName = 1;
+                $('.checkNameEdit').html('');
+                if(checkName == 1 && checkValue == 1)
+                    $('.btn-edit').prop('disabled', false);
+            }
+            else
+            {
+                checkName = 0;
+                alert('Vui lòng điền tên quy định!', 'danger', 'Name');
+                $('.btn-edit').prop('disabled', true);
+            }
+        });
+        $('.regulationValueEdit').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                checkValue = 1;
+                $('.checkValueEdit').html('');
+                if(checkName == 1 && checkValue == 1)
+                    $('.btn-edit').prop('disabled', false);
+            }
+            else
+            {
+                checkValue = 0;
+                alert('Vui lòng điền giá trị của quy định!', 'danger', 'Value');
+                $('.btn-edit').prop('disabled', true);
+            }   
+        });
+
+        // Kiểm tra ràng buộc khi thêm sản phẩm
+        var checkNameAdd = 0, checkValueAdd = 0;
+        $('.btn-add').prop('disabled', true);
+        $('.regulationNameAdd').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                checkNameAdd = 1;
+                $('.checkNameAdd').html('');
+                if(checkNameAdd == 1 && checkValueAdd == 1 )
+                    $('.btn-add').prop('disabled', false);
+            }
+            else
+            {
+                checkNameAdd = 0;
+                alertAdd('Vui lòng điền tên quy định!', 'danger', 'Name');
+                $('.btn-add').prop('disabled', true);
+            }
+        });
+        $('.regulationValueAdd').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                checkValueAdd = 1;
+                $('.checkValueAdd').html('');
+                if(checkNameAdd == 1 && checkValueAdd == 1)
+                    $('.btn-add').prop('disabled', false);
+            }
+            else
+            {
+                checkValueAdd = 0;
+                alertAdd('Vui lòng điền giá trị của qui định!', 'danger', 'Value');
+                $('.btn-add').prop('disabled', true);
+            }   
+        });
+    })
+</script>
+</html>

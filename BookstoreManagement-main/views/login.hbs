@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="/logo.ico" type="image/x-icon" />
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Mulish' rel='stylesheet'>
+    <!-- Font Awesome JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <!-- Upload CSS-->
+    <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            background-image: url(/background.png);
+            background-position: center;
+            background-repeat: none;
+            background-attachment: fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 65%;
+            height: 75%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 4px 4px #c8c8c6;
+            /* Center vertically and horizontally */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .container-child {
+            width: 100%;
+            position: relative;
+        }
+
+        .logo {
+            margin: 0;
+            padding: 0;
+            width: 45%;
+        }
+
+        .img-logo{
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .content {
+            width: 55%;
+        }
+        
+        .content .text {
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 3.5rem 0;
+        }
+
+        .content .form{
+            width: 75%;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group{
+            width: 100%;
+            height: 4.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0;
+            position: relative;
+        }
+
+        .form-group img {
+            position: absolute;
+            top: 1rem;
+            left: 0.25rem;
+        }
+
+        .image {
+            width: 2rem;
+            padding: 0.5rem;
+            min-width: 2.5rem;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 100%;
+            padding: 0 4rem;
+            border-radius: 50px;
+            border: 2px solid #BDE6F1;
+            outline: none;
+        }
+
+        .input-field:hover{
+            border-color: #C6F0FA;
+        }
+
+        .input-field:focus{
+            border: 3px solid #BDE6F1;
+        }
+
+        .form-group .label{
+            position: absolute;
+            left: 3rem;
+            top: 1.5rem;
+            font-size: 1rem;
+            padding: 0 0.5rem;
+            background-color: white;
+            opacity: 0.8;
+            transition: 
+                top 200ms ease-in,
+                left 200ms ease-in,
+                font-size 200ms ease-in;
+        }
+
+        #togglePassword{
+            position: absolute;
+            top: 1.7rem;
+            right: 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .submit{
+            display: block;
+            padding: 0.3rem 1.5rem;
+            background-color: #92D2C3;
+            color: #FEFEFE;
+            border-radius: 1rem;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 200ms ease-in;
+        }
+
+        .submit:hover{
+            background-color: #73ccb7;
+        }
+
+        .input-field:focus + .label{
+            top: -1rem; 
+            font-size: 1.1rem;
+            opacity: 1;
+            color: #67cae3;
+        }
+
+        .input-field:not(:placeholder-shown).input-field:not(:focus) + .label {
+            top: -1rem; 
+            font-size: 1.1rem;
+            opacity: 1;
+            color: #67cae3;
+        }
+
+        .remember{
+            display: inline;
+            padding: 0 0.2rem;
+        }
+        
+        .forgotPass{
+            text-decoration: none;
+        }
+
+        .checkName, .checkPass{
+            position: absolute;
+            z-index: 10;
+            width: 100%;
+        }
+
+        .danger_icon{
+            padding-right: 10px;
+        }
+    </style>
+    <title>Đăng nhập</title>
+</head>
+<body>
+    <div class="container d-flex flex-row align-content-center">
+        <div class="container-child d-flex flex-row ">
+            <div class="logo d-flex justify-content-center align-content-center">
+                <img src="/logo.png" alt="" class="img-logo align-self-center">
+            </div>
+            <div class="content d-flex flex-column align-content-center">
+                <h2 class="text align-self-center">Đăng nhập</h2>
+                
+                <form method="post" class="form align-self-center">
+                    <div class="form-group">
+                        <img src="/identity.png" class="image">
+                        <input type="text" id="username" name="username" class="input-field" placeholder=" " autocomplete="off">
+                        <label for="username" class="label">Tài khoản</label>
+                        <div class="checkName"></div>
+                    </div>
+                    <div class="form-group">
+                        <img src="/lock.png" class="image">
+                        <input type="password" id="password" name="password" class="input-field" placeholder=" ">
+                        <label for="password" class="label">Mật khẩu</label>
+                        <i class="far fa-eye" id="togglePassword"></i>
+                        <div class="checkPass"></div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-between">
+                        <div>
+                            <input type="checkbox" name="checkRemember" class="checkBox">
+                            <div class="remember">Remember Me</div>
+                        </div>
+                        <div>
+                            <a href="/forgotPass" class="forgotPass">Forgot Password?</a>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-center">
+                        <input type="submit" formaction="/login" value="Đăng nhập" class="submit align-self-center mt-4">
+                    </div>
+                </form>
+                
+                {{#if error}}
+                    <div class="alert alert-danger d-flex align-items-center mt-1 alert-dismissible" role="alert"> 
+                        <i class="fas fa-exclamation-triangle danger_icon"></i> 
+                        <div> {{message}} </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</body>
+<!-- Jquery -->
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+<!-- Popper.JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#togglePassword').click(function (e) {
+            // toggle the type attribute
+            const type = $('#password').attr('type') === 'password' ? 'text' : 'password';
+            $('#password').attr('type', type);
+            // toggle the eye slash icon
+            $('#togglePassword').toggleClass('fa-eye-slash');
+        });
+
+        function alert(message, type, element) {
+            $(`.check${element}`).html('<div class="alert alert-' + type + ' d-flex align-items-center mt-1 alert-dismissible" role="alert"> <i class="fas fa-exclamation-triangle"></i> <div> ' + message + ' </div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        }
+
+        // Kiêm tra ràng buộc ở đăng nhập
+        var checkName = 0, checkPass = 0;
+        $('.submit').prop('disabled', true);
+        $('#username').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                checkName = 1;
+                $('.checkName').html('');
+                if(checkName == 1 && checkPass == 1)
+                    $('.submit').prop('disabled', false);
+            }
+            else
+            {
+                checkName = 0;
+                alert('Vui lòng điền tên tài khoản!', 'danger', 'Name');
+                $('.submit').prop('disabled', true);
+            }
+        });
+        $('#password').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                checkPass = 1;
+                $('.checkPass').html('');
+                if(checkName == 1 && checkPass == 1)
+                    $('.submit').prop('disabled', false);
+            }
+            else
+            {
+                checkPass = 0;
+                alert('Vui lòng điền mật khẩu!', 'danger', 'Pass');
+                $('.submit').prop('disabled', true);
+            }   
+        });
+    });
+
+</script>
+</html>

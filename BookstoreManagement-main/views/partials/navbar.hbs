@@ -1,0 +1,69 @@
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div id="header" style='color:black'>
+      <a href="/home">
+        <img src="/assets/images/logo.png" id="logo-img"></img>
+      </a>
+      <h3 id="logo-title">BookStore Manager</h3>
+    </div>
+  </div>
+
+  <ul class="list-unstyled components">
+    <li class="{{#if active.home}}active{{/if}}">
+      <a href="/home">
+        <i class="fas fa-chart-pie" aria-hidden="true"></i>
+        Trang chính
+      </a>
+    </li>
+    <li class="{{#if active.bookLookUp}}active{{/if}}">
+      <a href="/bookLookUp">
+        <i class="fas fa-search"></i>
+        Tra cứu Sách
+      </a>
+    </li>
+
+    <li class="{{#if active.invoice}}active{{/if}}">
+      <a href="/invoice">
+        <i class="fas fa-file-invoice-dollar"></i>
+        Lập hóa đơn
+      </a>
+    </li>
+
+    <li class="{{#if active.payment}}active{{/if}}">
+      <a href="/payment">
+       <i class="fas fa-money-bill"></i>
+        Phiếu thu tiền nợ
+      </a>
+    </li>
+    <li class="{{#if active.bookImport}}active{{/if}}">
+      <a href="/bookImport">
+        <i class="fas fa-upload"></i>
+        Lập phiếu nhập
+      </a>
+    </li>
+    <li class="{{#if active.report}}active{{/if}}">
+      <a href="/report">
+        <i class="fas fa-chart-bar"></i>
+        Báo cáo
+      </a>
+    </li>
+    <li class="{{#if active.regulation}}active{{/if}}">
+      <a href="/regulation">
+        <i class="fas fa-tasks"></i>
+        Quy định
+      </a>
+    </li>
+    <li class="{{#if active.promotion}}active{{/if}}">
+      <a href="/promotion">
+        <i class="fas fa-cart-arrow-down"></i>
+        Thiết lập khuyến mãi
+      </a>
+    </li>
+    <li>
+      <a href="./signout">
+        <i class="fas fa-sign-out-alt"></i>
+        Đăng xuất
+      </a>
+    </li>
+  </ul>
+</nav>

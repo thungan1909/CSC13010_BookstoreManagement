@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {{>css}}
+
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        .img-promo {
+            border-radius: 20px;
+            box-shadow: 4px 4px #c8c8c6;
+        }
+        .img-promo:hover{
+            cursor: pointer;
+        }
+    </style>
+    <title>Thiết lập khuyến mãi</title>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {{>(nav)}}
+        <!-- Page Content  -->
+        <div id="content">
+            <div class="row justify-content-between">
+                <div class="col-md-9">
+                    <h1>Khuyến mãi</h1>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                            data-bs-target="#addPromotion">
+                        <h5>
+                            <i class="fas fa-plus" style="font-size: 20px;"></i>
+                            Thêm khuyến mãi
+                        </h5>
+                    </button>
+                </div>
+            </div>
+            <div class="row my-5">
+                {{#if this.empty}}
+                    <div class="card-body">
+                        <p class="card-text">Không có dữ liệu.</p>
+                    </div>
+                {{else}}
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <div class="row d-flex flex-row justify-content-center align-items-center">
+                            {{#each this.promotions }}
+                                <div class="col-lg-6 mb-3">
+                                    <div class="d-flex flex-column justify-content-center align-items-center">
+                                            <img src="/{{LinkAnhKhuyenMai}}"
+                                                class="d-block w-50 edit-image align-self-center mb-2 img-promo" alt="{{LinkAnhKhuyenMai}}"
+                                                data-bs-toggle="modal" data-bs-target="#infoPromotion{{Id}}"> 
+                                        {{#if LoaiKhuyenMai}}
+                                            <div class = "h3">
+                                                Khuyến mãi
+                                            </div>
+                                        {{else}}
+                                            <div class = "h3">
+                                                Ưu đãi
+                                            </div>
+                                        {{/if}}
+                                    </div>
+                                </div>      
+                            {{/each}}
+                        </div>
+
+                        <!-- Pagination of promotion -->  
+                        <nav aria-label="...">
+                            <ul class="pagination">
+                                <li class="page-item  {{#unless can_go_prev}} disabled {{/unless}}">
+                                <a class="page-link" href="?page={{prev_value}}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                                </li>
+                                {{#each this.page_items }}
+                                    {{#if isActive}}
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{value}}</span>
+                                        </li>
+                                    {{else}}
+                                        <li class="page-item {{#if isDisabled}} disabled {{/if}}"><a class="page-link" href="?page={{value}}">{{value}}</a></li>
+                                    {{/if}}
+                                {{/each}}
+                                <li class="page-item  {{#unless can_go_next}} disabled {{/unless}}">
+                                    <a class="page-link" href="?page={{next_value}}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                {{/if}}
+            </div>
+
+            <!-- Modal of Add-->
+            <div class="modal fade" id="addPromotion" tabindex="-1" aria-labelledby="addpromotionLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="/promotion/add" enctype="multipart/form-data">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Thêm sản phẩm</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-2">
+                                    <label for="promotionName">Loại Khuyến mãi (0: Ưu đãi, 1: Khuyến mãi) <span style="color: red">*</span>: </label>
+                                    <input class="form-control promotionNameAdd" type="text" name="promotionName">
+                                    <div class="checkNameAdd"></div>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="promotionImage">Tải hình ảnh về khuyến mãi <span style="color: red">*</span>: </label>
+                                    <input class="form-control promotionImageAdd" type="file" name="promotionImage" id="promotionImage" multiple>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="productOfPacket">Danh sách các sản phẩm <span style="color: red">*</span>: </label>
+                                    <br>
+                                    <ul style="list-style-type: none;">
+                                        {{#each allBooks}}
+                                        <li>
+                                            <input type="checkbox" class="bookPromotion" name="options[]" value="{{Id}}">
+                                            <label class="text-capitalize"> {{TenSach}}</label><br>
+                                        </li>
+                                        {{/each}}
+                                    </ul>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label for="promotionPercentage">Phần trăm khuyến mãi quy đổi <span style="color: red">*</span>: </label>
+                                    <input class="form-control" type="number" name="promotionPercentage" min="1" max="100"> 
+                                    <div class="checkPercentageAdd"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary btn-add" value="Save" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal of Info -->
+            {{#each this.promotions }}
+            <div class="modal fade" id="infoPromotion{{Id}}" tabindex="-1" aria-labelledby="infoPromotionLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Các sách được 
+                                    {{#if LoaiKhuyenMai}}
+                                            <strong>Khuyến mãi</strong>
+                                    {{else}}
+                                            <strong>Ưu đãi</strong>
+                                    {{/if}}
+                            </h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="h-4 mb-2">Phần trăm khuyến mãi quy đổi: <strong>{{PhanTramGiamGia}}%</strong></div>
+                            {{#if this.Book.length}}
+                                <table class="table table-striped table-info">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">STT</th>
+                                            <th scope="col">Tên sách</th>
+                                            <th scope="col">Tác Giả</th>
+                                        </tr>
+                                    </thead>
+                                    {{#each this.Book}}
+                                        <tbody>
+                                            <tr>
+                                                <td>{{STT}}</td>
+                                                <td>{{TenSach}}</td>
+                                                <td>{{TacGia}}</td>
+                                            </tr>
+                                        </tbody>
+                                    {{/each}}
+                                </table>                              
+                            {{else}}
+                                <div class="card-body">
+                                    <p class="card-text">Không có dữ liệu.</p>
+                                </div>
+                            {{/if}}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+
+<!-- Jquery -->
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<!-- Popper.JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
+<!-- Upload JS-->
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/js/plugins/piexif.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/js/plugins/sortable.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/js/fileinput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.5/themes/fas/theme.min.js"></script>
+
+<script>
+    
+    $(document).ready( () => {
+        // Upload ảnh
+        $( function() {
+            $("#productImage").fileinput({
+                uploadUrl: "/images",
+                maxFileCount: 5,
+                allowedFileTypes: ['image'],    // allow only images
+                showCancel: true,
+                initialPreviewAsData: true,
+                overwriteInitial: false,
+                theme: 'fas',
+            });
+        });
+
+        function alertAdd(message, type, element) {
+            $(`.check${element}Add`).html('<div class="alert alert-' + type + ' d-flex align-items-center mt-1 alert-dismissible" role="alert"> <i class="fas fa-exclamation-triangle"></i> <div>' + message + '</div><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        }
+
+        // Kiểm tra ràng buộc khi thêm sản phẩm
+        var checkNameAdd = 0;
+        $('.btn-add').prop('disabled', true);
+        $('.promotionNameAdd').keyup(function() {
+            if($(this).val().length != 0)
+            {
+                if($(this).val().length == 1) {
+                    checkNameAdd = 1;
+                    $('.checkNameAdd').html('');
+                    if(checkNameAdd == 1)
+                        $('.btn-add').prop('disabled', false);
+                } else {
+                    alertAdd('Vui lòng điền loại khuyến mãi là 0 hoặc 1!', 'danger', 'Name');
+                    $('.btn-add').prop('disabled', true);
+                }
+            }
+            else
+            {
+                checkNameAdd = 0;
+                alertAdd('Vui lòng điền loại khuyến mãi!', 'danger', 'Name');
+                $('.btn-add').prop('disabled', true);
+            }
+        });
+    })
+
+</script>
+
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {{>css}}
+    <style>
+        th[colspan="4"] {
+            text-align: center;
+        }
+    </style>
+
+    <title>Lập báo cáo</title>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {{>(nav)}}
+        <!-- Page Content  -->
+        <div id="content" {{#if inventory}} class="modalOpen" {{/if}}>
+
+            <div id="content">
+                <div class="row text-center">
+                    <div class="col-md-12">
+                        <h2>
+                            <a href="/report/inventory">Báo cáo tồn</a>
+                            |
+                            <a href="/report/debt" class="text-secondary">Báo cáo công nợ</a>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="row ">
+                    <div class="col-md-8">
+                        <div class="row d-flex justify-content-center my-3">
+                            <div class="col-auto">
+                                <form method="post" action="/report/inventory" id="inventory-form">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto my-1">
+                                            <label class="mr-sm-2" for="month">Tháng</label>
+                                            <select class="custom-select mr-sm-2" id="month" name="month">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-auto my-1">
+                                            <label class="mr-sm-2" for="year">Năm</label>
+                                            <select class="custom-select mr-sm-2" id="year" name="year">
+
+                                                <option value="2020">2020</option>
+                                                <option value="2021">2021</option>
+                                                <option value="2022">2022</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+
+                        </form>
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary" id="makeReportBtn" form="inventory-form">
+                                    <i class="fas fa-plus"></i>
+                                    Lập báo cáo
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="/assets/images/report.png" alt="" srcset="" height="200px">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" tabindex="-1" role="dialog" id="inventoryReport">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Báo cáo tồn</h5>
+                        <button type="button" class="btn btn-light close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped table-info">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tên Sách</th>
+                                    <th scope="col">Nhập Vào</th>
+                                    <th scope="col">Bán Ra</th>
+                                    <th scope="col">Lượng Tồn</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody id="modal-inventory-body">
+                                {{#if this.empty}}
+                                <tr>
+                                    <th class="card-text" colspan="4">Không có dữ liệu.</th>
+                                </tr>
+                                {{else}}
+                                {{#each inventories}}
+                                <tr>
+                                    <th scope="row">{{this.TenSach}}</th>
+                                    <td>{{this.input}}</td>
+                                    <td>{{this.output}}</td>
+                                    <td>{{this.inventory}}</td>
+                                </tr>
+                                {{/each}}
+                                {{/if}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            if ($('#content').hasClass('modalOpen')) {
+                $('#inventoryReport').modal('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

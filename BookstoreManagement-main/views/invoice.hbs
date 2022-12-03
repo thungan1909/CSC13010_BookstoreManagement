@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {{>css}}
+    <style>
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+
+        }
+
+        .modal-body {
+            padding-top: 0;
+        }
+
+        #invoice-table {
+            max-height: 36vh;
+            overflow-y: auto;
+        }
+    </style>
+    <title>Lập hóa đơn</title>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {{>(nav)}}
+        <!-- Page Content  -->
+        <div id="content">
+            <form id="invoice-form" method="post">
+                <div class="row p-2">
+                    <div class="col-md-9">
+                        <div class="card text-bg-light mb-3" style="max-width: 48rem;">
+                            <div class="card-header">
+                                <h5>Thông tin khách hàng</h5>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group p-3">
+                                    <div class="row">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-10 mx-auto text-center">
+                                                <div class="alert alert-danger" role="alert" id="MessageValidate"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="customerName">Tên khách hàng</label>
+                                            <input type="text" name="customerName" class="form-control"
+                                                id="customerName" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="customerAddress">Địa chỉ</label>
+                                            <input type="text" name="customerAddress" class="form-control"
+                                                id="customerAddress" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="customerPhoneNumber">Điện thoại</label>
+                                            <input type="text" name="customerPhoneNumber" class="form-control"
+                                                id="customerPhoneNumber" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="customerEmail">Email</label>
+                                            <input type="email" name="customerEmail" class="form-control"
+                                                id="customerEmail" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row py-5">
+                            <div class="col-md-12">
+
+                                <img src="/assets/images/bill.png" alt="" srcset="" height="160px">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <button type="button" class="btn btn-outline-primary" data-toggle="modal"
+                                    data-target="#addBookModal">
+                                    <i class="fas fa-plus"></i>
+                                    Thêm sách
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12" id="invoice-table">
+
+                                <table class="table table-striped table-info border" id="list-book">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Tên sách</th>
+                                            <th scope="col">Tác giả</th>
+                                            <th scope="col">Thể loại</th>
+                                            <th scope="col">Số lượng</th>
+                                            <th scope="col">Đơn giá</th>
+                                            <th scope="col">Khuyến mãi</th>
+                                        </tr>
+                                    </thead>
+                                    <input type="hidden" id="current-amount" name="currentAmount" value=0>
+                                    <input type="hidden" id="max-index" name="maxIndex" value={{maxIndex}}>
+                                    <input type="hidden" id="sum-price-hidden" name="sumPrice" value=0>
+                                    <tbody id="invoice-content">
+
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div class="row my-2">
+
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <button id="debt-button" type="submit" class="btn btn-outline-success"
+                                    form="invoice-form" formaction="/invoice/debt">
+                                    <i class="fas fa-edit"></i>
+                                    Ghi nợ
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="pay-button" type="submit" class="btn btn-outline-success"
+                                    form="invoice-form" formaction="/invoice/pay">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    Thanh toán
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <h2>Tổng: <span id="sum-price"></span></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" id="addBookModal">
+        <div class="modal-dialog modal-xl .modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm sách</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="border: none">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form>
+                    <div class="modal-body" style="max-height: 60vh; overflow-y:scroll">
+                        <table class="table table-striped table-info" id="addModal">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tên sách</th>
+                                    <th scope="col">Tác giả</th>
+                                    <th scope="col">Thể loại</th>
+                                    <th scope="col">Đơn giá</th>
+                                    <th scope="col">Lượng tồn</th>
+                                    <th scope="col">Khuyến mãi</th>
+                                    <th scope="col">Số lượng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each books}}
+                                <tr>
+                                    <td>{{this.TenSach}}</td>
+                                    <td>{{this.TacGia}}</td>
+                                    <td>{{this.TheLoai}}</td>
+                                    <td>{{format_number this.DonGia}}</td>
+                                    <td>{{this.LuongTon}}</td>
+                                    <td>{{this.PhanTramGiamGia}}%</td>
+                                    <td>
+                                        <input type="number" name="amount" style="width: 40px"
+                                            id="{{this.Index}}-amount" class="numberOfBook" title="Lượng tổn tối thiểu sau khi bán là {{../minAfterSelling}}">
+                                    </td>
+                                    <input type="hidden" id="{{this.Index}}" name="index" value="{{this.Index}}">
+                                    <input type="hidden" id="{{this.Index}}-id" name="id" value="{{this.Id}}">
+                                    <input type="hidden" id="{{this.Index}}-name" name="name" value="{{this.TenSach}}">
+                                    <input type="hidden" id="{{this.Index}}-author" name="author"
+                                        value="{{this.TacGia}}">
+                                    <input type="hidden" id="{{this.Index}}-type" name="type" value="{{this.TheLoai}}">
+                                    <input type="hidden" id="{{this.Index}}-price" name="price" value="{{this.DonGia}}">
+                                    <input type="hidden" id="{{this.Index}}-rest" name="rest" value="{{this.LuongTon}}">
+                                    <input type="hidden" id="{{this.Index}}-promotion" name="promotion"
+                                        value="{{this.PhanTramGiamGia}}">
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            id="confirmAddBookToInvoice">Thêm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{!-- modal add invoice import successfully --}}
+    <div class="modal fade" id="informAddInvoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center mx-auto">
+                    <div>
+                        <h1 class="fa fa-check-circle" style="color: green; font-size: 60px; width: 60px"></h1>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <h3 class="text-center">{{alert}}</h3>
+                    </div>
+                    <form action="/invoice" method="get" class="text-center">
+                        <button class="btn btn-success btn-block" type="submit">Xác nhận</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {{!-- modal add debt failed --}}
+    <div class="modal fade" id="informAddDebtFailed" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center mx-auto">
+                    <div>
+                        <h1 class="fa fa-times-circle" style="color: red; font-size: 60px; width: 60px"></h1>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <h3 class="text-center">{{failedAlert}}</h3>
+                    </div>
+                    <form action="/invoice" method="get" class="text-center">
+                        <button class="btn btn-danger btn-block" type="submit">Xác nhận</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        $(document).ready(() => {
+            $('.numberOfBook').change(()=>{
+                const target = event.target;
+                if(target.value<0){
+                    target.value=0;
+                }
+                const inventoryString = target.id.replace('amount', 'rest');
+                const inventory = Number($(`#${inventoryString}`).val());
+                if(target.value>inventory){
+                    if(inventory-{{minAfterSelling}} > 0)
+                        target.value=inventory-{{minAfterSelling}};
+                    else
+                        target.value=0;
+                }
+            });
+            $('.numberOfBook').keyup(()=>{
+                const target = event.target;
+                if(target.value<0){
+                    target.value=0;
+                }
+                const inventoryString = target.id.replace('amount', 'rest');
+                const inventory = Number($(`#${inventoryString}`).val());
+                if(target.value>inventory){
+                   if(inventory-{{minAfterSelling}} > 0)
+                        target.value=inventory-{{minAfterSelling}};
+                   else
+                        target.value=0;
+                }
+                
+            });
+            $('#confirmAddBookToInvoice').on('click', () => {
+                $('#invoice-content tr').empty();
+                $('#current-amount').val(0);
+                const maxIndex = $('#max-index').val();
+                const name = [];
+                const author = [];
+                const type = [];
+                const amount = [];
+                const price = [];
+                const id = [];
+                const promotion = []
+                let sumPrice = 0;
+                let currentAmount = Number($('#current-amount').val());
+                for (let i = 0; i <= maxIndex; i++) {
+                    if ($(`#${i}-amount`).val() > 0) {
+                        name.push($(`#${i}-name`).val());
+                        author.push($(`#${i}-author`).val());
+                        type.push($(`#${i}-type`).val());
+                        amount.push($(`#${i}-amount`).val());
+                        price.push(numberWithCommas($(`#${i}-price`).val()));
+                        id.push($(`#${i}-id`).val());
+                        promotion.push($(`#${i}-promotion`).val());
+                        console.log($(`#${i}-id`).val());
+                        sumPrice += $(`#${i}-price`).val() * $(`#${i}-amount`).val() * (100 - $(`#${i}-promotion`).val()) / 100;
+                        currentAmount++;
+                    }
+                }
+                $('#current-amount').val(currentAmount);
+                console.log(id);
+                for (let i = 0; i < name.length; i++) {
+                    $('#invoice-content').append(`
+                            <tr id="book${i}">
+                                <td scope="row">${name[i]}</td>
+                                <td>${author[i]}</td>
+                                <td>${type[i]}</td>
+                                <td>${amount[i]}</td>
+                                <td>${price[i]}</td>
+                                <td>${promotion[i]}%</td>
+                                <input type="hidden" id="{{this.Index}}" name="id${[i]}" value="${id[i]}">
+                                <input type="hidden" id="{{this.Index}}" name="amount${[i]}" value="${amount[i]}">
+                                <input type="hidden" id="{{this.Index}}" name="promotion${[i]}" value="${promotion[i]}">
+                            </tr>`
+                    );
+                }
+                $('#sum-price').text(numberWithCommas(sumPrice));
+                $('#sum-price-hidden').val((sumPrice));
+                checkValid();
+            });
+        });
+        $('#MessageValidate').hide();
+        $('#customerName').focus(() => {
+            $('#MessageValidate').hide();
+        });
+        function removeAscent(str) {
+            if (str === null || str === undefined) return str;
+            str = str.toLowerCase();
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/\s/g, "");
+            return str;
+        }
+        function checkValidCustomerName() {
+            const pattern = /^[a-zA-Z]{1,}$/g;
+            const name = $('#customerName').val();
+            if (name.length === 0) {
+                return 0;
+            }
+            if (!pattern.test(removeAscent(name))) {
+                return 1;
+            }
+            return 2;
+        }
+        $('#customerName').keyup(() => {
+            if (checkValidCustomerName() === 0) {
+                $('#MessageValidate').html("Họ tên không được để trống!");
+                $('#MessageValidate').show("slow");
+            }
+            else if (checkValidCustomerName() === 1) {
+                $('#MessageValidate').html("Họ tên chỉ bao gồm chữ!");
+                $('#MessageValidate').show("slow");
+            }
+            else {
+                $('#MessageValidate').hide();
+            }
+        });
+        function checkValidCustomerPhoneNumber() {
+            const pattern = /\b0\d{9}\b/g;
+            const phoneNumber = $('#customerPhoneNumber').val();
+            if (phoneNumber.length === 0) {
+                return 0;
+            }
+            if (!pattern.test(phoneNumber)) {
+                return 1;
+            }
+            return 2;
+        }
+        $('#customerPhoneNumber').focus(() => {
+            $('#MessageValidate').hide();
+        });
+        $('#customerPhoneNumber').keyup(() => {
+            //const pattern = /[A-Za - z]/;
+            var pattern = /\b0\d{9}\b/g;
+            const phoneNumber = $('#customerPhoneNumber').val();
+            if (checkValidCustomerPhoneNumber() === 0) {
+                $('#MessageValidate').html("Số điện thoại không được để trống!");
+                $('#MessageValidate').show(300);
+            }
+            else if (checkValidCustomerPhoneNumber() === 1) {
+                $('#MessageValidate').html("Số điện thoại là 1 dãy số gồm 10 chữ số, bắt đầu bằng 0!");
+                $('#MessageValidate').show(300);
+            }
+            else {
+                $('#MessageValidate').hide();
+            }
+        });
+        function checkValid() {
+            if (checkValidCustomerName() > 1
+                && checkValidCustomerPhoneNumber() > 1
+                && $('#customerAddress').val().length > 0
+                && $('#customerEmail').val().length > 0
+                && Number($('#current-amount').val()) > 0) {
+                $('#debt-button').prop('disabled', false);
+                $('#pay-button').prop('disabled', false);
+            }
+            else {
+                $('#debt-button').prop('disabled', true);
+                $('#pay-button').prop('disabled', true);
+            }
+        }
+        $('#debt-button').prop('disabled', true);
+        $('#pay-button').prop('disabled', true);
+        $('#customerName').keyup(checkValid);
+        $('#customerAddress').keyup(checkValid);
+        $('#customerPhoneNumber').keyup(checkValid);
+        $('#customerEmail').keyup(checkValid);
+        {{#if alert }}
+        $('#informAddInvoice').modal('show');
+        {{/if}}
+        {{#if failedAlert }}
+        $('#informAddDebtFailed').modal('show');
+        {{/if}}
+    </script>
+</body>
+
+</html>
